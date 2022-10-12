@@ -1,0 +1,2 @@
+#!/bin/bashi
+paste -d, - - | cut -d, -f1
