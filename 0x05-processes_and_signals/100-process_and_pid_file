@@ -23,6 +23,6 @@ trap "echo 'I hate the kill command'" SIGTERM
 
 # loop indefinitely
 while true; do
-    sleep 1
+	sleep 1
 done
 
