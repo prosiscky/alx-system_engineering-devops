@@ -6,22 +6,19 @@
 #Displays Y U no love me?! when receiving a SIGINT signal
 #Deletes the file /var/run/myscript.pid and terminates itself when receiving a SIGQUIT or SIGTERM signal
 
-# creating the file myscript.pid
-echo $$ > /var/run/myscript.pid
-#trap SIGTERM and SIGQUIT signals to delete the PID file and terminate the script
-trap "rm -f /var/run/myscript.pid; echo 'Exiting gracefully'; exit 0" SIGTERM SIGQUIT
+function remove {
+	rm /var/run/myscript.pid
+	exit
+}
 
-# trap SIGINT signal to display a message
-trap "echo Y U no love me?!" SIGINT
+echo "$$" > /var/run/myscript.pid
 
-# display a message indefinitely
-echo "To infinity and beyond"
+while true
+do
+	echo "To infinity and beyond"
+	sleep 2
 
-# trap SIGTERM signal to display a message
-trap "echo I hate the kill command" SIGTERM
-
-# loop indefinitely
-while true; do
-	sleep 1
+	trap 'echo "I hate the kill command" && remove' SIGTERM
+	trap 'echo "Y U no love me?!"' SIGINT
+	trap 'remove' SIGQUIT
 done
-
