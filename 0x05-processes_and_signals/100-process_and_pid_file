@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-#Write a Bash script that:
-
+# Bash script that:
 #Creates the file /var/run/myscript.pid containing its PID
 #Displays To infinity and beyond indefinitely
 #Displays I hate the kill command when receiving a SIGTERM signal
