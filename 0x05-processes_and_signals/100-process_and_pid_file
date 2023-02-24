@@ -13,13 +13,13 @@ echo $$ > /var/run/myscript.pid
 trap "rm -f /var/run/myscript.pid; echo 'Exiting gracefully'; exit 0" SIGTERM SIGQUIT
 
 # trap SIGINT signal to display a message
-trap "echo 'Y U no love me?!'" SIGINT
+trap "echo Y U no love me?!" SIGINT
 
 # display a message indefinitely
-echo "To infinity and beyond!"
+echo "To infinity and beyond"
 
 # trap SIGTERM signal to display a message
-trap "echo 'I hate the kill command'" SIGTERM
+trap "echo I hate the kill command" SIGTERM
 
 # loop indefinitely
 while true; do
