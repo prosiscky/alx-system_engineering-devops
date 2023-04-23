@@ -5,4 +5,7 @@
 # Your SSH client configuration must be configured to use the private key ~/.ssh/school
 # Your SSH client configuration must be configured to refuse to authenticate using a password
 
+#copy public_key to the server
+ssh-copy-id -i ~/.ssh/school.pub ubuntu@54.227.195.248
+#Connect using private key
 ssh -i ~/.ssh/school ubuntu@54.227.195.248
