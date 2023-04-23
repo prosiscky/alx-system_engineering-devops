@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Connecting to a server using rsa ssh without typing password
+
+# REQUIREMENTS:
+# Your SSH client configuration must be configured to use the private key ~/.ssh/school
+# Your SSH client configuration must be configured to refuse to authenticate using a password
+
+ssh -i ~/.ssh/school ubuntu@54.227.195.248
