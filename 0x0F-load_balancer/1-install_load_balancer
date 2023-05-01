@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# A script that installs and configures  HAPROXY
+
+# Install HAPROXY
+sudo apt-get -y update
+sudo apt-get -y install haproxy
+
+# Append Frontend and Backend config using roundrobin algorithm
+echo "
+frontend browser_side
+	bind *:80
+	default_backend serva_side
+
+backend serva_side
+	balance roundrobin
+	server 170477-web-01 54.227.195.248:80 check
+	server 170477-web-02 34.207.222.38:80 check
+" >> /etc/haproxy/haproxy.cfg
+
+#ENABLE HAPROXY
+sudo sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/haproxy
+
+# RESTART
+sudo service haproxy restart
