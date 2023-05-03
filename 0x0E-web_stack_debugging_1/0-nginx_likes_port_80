@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# A bash script that corrects error with Nginx listening Port
+
+# Converting sites-enabled/default to a symbolic link that points to sites-available
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+sudo service nginx start
