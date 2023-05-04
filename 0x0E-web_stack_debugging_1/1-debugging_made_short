@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 # A bash script that corrects error with Nginx listening Port
 ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-service nginx restart
-pkill nginx
+sudo service nginx restart
+sudo pkill nginx
