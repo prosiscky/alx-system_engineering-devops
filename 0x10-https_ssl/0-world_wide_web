@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# A script that displays information about a specified domains and subdomains
+
+print_Dominfo ()
+{
+	line=$(dig "$2"."$1" | grep -A1 "ANSWER SECTION" | tail -n 1)
+	echo "$2 $line" | awk '{print "The subdomain " $1 " is a " $5 " record and points to " $6}'
+}
+
+if [ $# -eq 1 ]
+then
+  print_Dominfo "$1" "www"
+  print_Dominfo "$1" "lb-01"
+  print_Dominfo "$1" "web-01"
+  print_Dominfo "$1" "web-02"
+elif [ $# -eq 2 ]
+then
+  print_Dominfo "$1" "$2"
+fi
