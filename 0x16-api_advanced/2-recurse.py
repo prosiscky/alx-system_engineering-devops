@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""A script that returns the titles of all hot articles. 
+"""Returns a list of all topics for all hot articles
    for a given Reddit subreddit
 """
 import requests
