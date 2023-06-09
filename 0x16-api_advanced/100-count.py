@@ -1,91 +1,81 @@
 #!/usr/bin/python3
-""" Functions to adcquire info from API Reddit"""
+"""
+Write a recursive function that queries the Reddit API, parses the title
+of all hot articles, and prints a sorted count of given keywords
+(case-insensitive, delimited by spaces. Javascript should count as
+javascript, but java should not).
+
+Requirements:
+
+Prototype: def count_words(subreddit, word_list)
+Note: You may change the prototype, but it must be able to be called with
+just a subreddit supplied and a list of keywords. AKA you can add a counter
+or anything else, but the function must work without supplying a starting
+value in the main.
+If word_list contains the same word (case-insensitive), the final count should
+be the sum of each duplicate (example below with java)
+Results should be printed in descending order, by the count, and if the count
+is the same for separate keywords, they should then be sorted alphabetically
+(ascending, from A to Z). Words with no matches should be skipped and not
+printed. Words must be printed in lowercase.
+Results are based on the number of times a keyword appears, not titles it
+appears in. java java java counts as 3 separate occurrences of java.
+To make life easier, java. or java! or java_ should not count as java
+If no posts match or the subreddit is invalid, print nothing.
+NOTE: Invalid subreddits may return a redirect to search results. Ensure that
+you are NOT following redirects.
+Your code will NOT pass if you are using a loop and not recursively calling the
+function! This /can/ be done with a loop but the point is to use a recursive
+function. :)
+
+Disclaimer: number presented in this example cannot be accurate now - Reddit
+is hot articles are always changing
+"""
 import requests
-after = None
 
 
-def count_words(subreddit, word_list):
-    """Count the titles found with wordlist in subreddit"""
-    my_list = recurse(subreddit)
-    my_dict = {}
-
-    if my_list:
-        for word in word_list:
-            my_dict[word] = 0
-
-        for title in my_list:
-            title_split = title.split(" ")
-
-            for iter in title_split:
-                for iter_split in word_list:
-                    if iter.lower() == iter_split.lower():
-                        my_dict[iter_split] += 1
-
-        for key, val in sorted(my_dict.items(),  key=lambda x: x[1],
-                               reverse=True):
-            if val != 0:
-                print("{}: {}".format(key, val))
-
-
-def recurse(subreddit, hot_list=[]):
-    """ recurse is a function that return hot list from
-        a subreddit"""
-    global after
-    headers = {'User-Agent': 'ledbag123'}
+def count_words(subreddit, word_list, hot_list=[], after=None):
+    """
+    Queries the Reddit API, parses the title of all hot articles,
+    and prints a sorted count of given keywords.
+    """
     url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    parameters = {'after': after}
-    response = requests.get(url, headers=headers, allow_redirects=False,
-                            params=parameters)
+    headers = {"User-Agent": "Fake Agent"}
+    params = {'after': after} if after else {}
+
+    response = requests.get(url, headers=headers, params=params)
+    data = response.json()
+
     if response.status_code == 200:
-        prox = response.json().get('data').get('after')
+        for post in data['data']['children']:
+            title = post['data']['title'].lower()
+            words = title.split()
 
-        if prox is not None:
-            after = prox
-            recurse(subreddit, hot_list)
-        list_titles = response.json().get('data').get('children')
+            for word in words:
+                # Remove punctuation at the end of words
+                word = word.rstrip('.!_')
 
-        for title_ in list_titles:
-            hot_list.append(title_.get('data').get('title'))
-        return hot_list
-    else:
-        return (None)
-'''    
-#!/usr/bin/python3
-""" Exporting csv files"""
-import json
-import requests
-import sys
+                # Count the occurrences of matching keywords
+                if word.lower() in word_list:
+                    hot_list.append(word.lower())
 
+        after = data['data']['after']
 
-def count_words(subreddit, word_list, after="null", host_list=[]):
-    """Read reddit API and return top 10 hotspots """
-    username = 'ledbag123'
-    password = 'Reddit72'
-    user_pass_dict = {'user': username, 'passwd': password, 'api_type': 'json'}
-    headers = {'user-agent': '/u/ledbag123 API Python for Holberton School'}
-    payload = {"limit": "100", "after": after}
-    url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
-    client = requests.session()
-    client.headers = headers
-    r = client.get(url, allow_redirects=False, params=payload)
-    if r.status_code == 200:
-        list_titles = r.json()['data']['children']
-        after = r.json()['data']['after']
-        if after is not None:
-            try:
-                host_list.append(list_titles[len(host_list)]['data']['title'])
-            except:
-                pass
-            count_words(subreddit, word_list, after, host_list)
+        if after:
+            return count_words(subreddit, word_list, hot_list, after)
         else:
-            my_count = [0] * len(word_list)
-            for title in host_list:
-                for pos in range(len(word_list)):
-                    counter = len([x for x in title.split()
-                                   if x == word_list[pos]])
-                    my_count[pos] += counter
-            for pos in range(len(word_list)):
-                print("{}: {}".format(word_list[pos], my_count[pos]))
+            word_count = {}
+
+            for word in hot_list:
+                if word not in word_count:
+                    word_count[word] = 1
+                else:
+                    word_count[word] += 1
+
+            sorted_words = sorted(
+                    word_count.items(), key=lambda x: (-x[1], x[0]))
+
+            for word, count in sorted_words:
+                print("{}: {}".format(word, count))
     else:
-        return(None)
-'''
+        print("Invalid subreddit or no posts found.")
